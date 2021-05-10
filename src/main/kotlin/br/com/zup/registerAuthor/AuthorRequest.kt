@@ -13,5 +13,5 @@ data class AuthorRequest(
 	val email: String,
 	val cpf: String
 ) {
-	fun toAuthor(): Author = Author(name, email, cpf)
+	fun toAuthor(address: AddressResponse): Author = Author(name, email, cpf, address.toAddress())
 }

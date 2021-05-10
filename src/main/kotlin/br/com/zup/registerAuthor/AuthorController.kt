@@ -11,6 +11,8 @@ import io.micronaut.http.annotation.Post
 import io.micronaut.http.annotation.Put
 import io.micronaut.http.annotation.QueryValue
 import io.micronaut.http.exceptions.HttpStatusException
+import io.micronaut.http.server.util.locale.HttpLocaleResolver
+import io.micronaut.http.uri.UriBuilder
 import io.micronaut.validation.Validated
 import javax.transaction.Transactional
 import javax.validation.Valid
@@ -21,13 +23,16 @@ typealias ListAuthorResponse = List<AuthorResponse>
 
 @Controller("/author")
 @Validated
-class AuthorController(val repository: AuthorRepository) {
+class AuthorController(val repository: AuthorRepository, val addressClient: AddressHttpClient) {
 
 	@Post
 	fun register(@Body @Valid request: AuthorRequest): HttpResponse<AuthorResponse> {
-		val saved = repository.save(request.toAuthor())
+		val address = addressClient.getAddress("00000-000")
+		val saved = repository.save(request.toAuthor(address.body()!!))
 
-		return HttpResponse.ok(AuthorResponse(saved))
+		val uri = UriBuilder.of("/author/{id}")
+			.expand(mutableMapOf(Pair("id", saved.id)))
+		return HttpResponse.created<AuthorResponse>(uri).body(AuthorResponse(saved))
 	}
 
 	@Get

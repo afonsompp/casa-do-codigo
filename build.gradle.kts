@@ -40,6 +40,7 @@ dependencies {
 	implementation("io.micronaut:micronaut-validation")
 	runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("mysql:mysql-connector-java")
+	implementation("io.micronaut.xml:micronaut-jackson-xml")
 
 }
 
